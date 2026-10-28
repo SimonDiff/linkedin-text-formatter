@@ -42,7 +42,7 @@ The **Safe** group (case and lists) uses plain characters and has none of these 
 That's why the toolbar keeps the two groups apart.
 
 > [!NOTE]
-> **Honestly?** I know most people won't bother with any of this. Nobody has time to proofread what ChatGPT
+> I know most people won't bother with any of this. Nobody has time to proofread what ChatGPT
 > tells them to post these days, let alone format it, and ChatGPT writes plain text anyway.
 > As for the algorithm, going viral was never really the goal for me. I just like my comments and messages
 > to look the way I want. If you feel the same, use stylized text for a few words that deserve it,
