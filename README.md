@@ -1,4 +1,4 @@
-# LinkedIn Text Formatter
+# LinkedIn DiffStyle
 
 A Chrome extension that adds a formatting toolbar to LinkedIn posts, comments and messages.
 
