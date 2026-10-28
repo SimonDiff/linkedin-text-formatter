@@ -200,7 +200,7 @@
       };
       const moreBtn = `<button type="button" data-pop="more" title="More stylized fonts" aria-haspopup="true">${ICONS.more}</button>`;
       const clearBtn = `<button type="button" class="labeled" data-style="clear" title="Turn stylized letters back into plain text">${ICONS.clear}${compact ? 'Clear' : 'Clear formatting'}</button>`;
-      const aboutBtn = `<button type="button" class="badge" data-pop="about" title="About LinkedIn Text Formatter" aria-label="About LinkedIn Text Formatter">${ICONS.badge}</button>`;
+      const aboutBtn = `<button type="button" class="badge" data-pop="about" title="About LinkedIn DiffStyle" aria-label="About LinkedIn DiffStyle">${ICONS.badge}</button>`;
       const count = limit && !counterBelow ? '<span class="count" aria-live="polite"></span>' : '';
       const classes = ['bar', layout, compact && 'compact', inlineTitles && 'inlinetitles', layout === 'floating' && 'hidden'].filter(Boolean).join(' ');
 
@@ -230,7 +230,7 @@
         ),
         about: new Popover(
           `<div class="about">
-            <p><strong>LinkedIn Text Formatter</strong> extension by <a href="${AUTHOR_URL}" target="_blank" rel="noopener">Simon Diff</a></p>
+            <p><strong>LinkedIn DiffStyle</strong> extension by <a href="${AUTHOR_URL}" target="_blank" rel="noopener">Simon Diff</a></p>
             <p>Open source on <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a>.</p>
           </div>`,
           (e, pop) => { if (e.target.closest('a')) setTimeout(() => pop.toggle(null, false), 0); },
