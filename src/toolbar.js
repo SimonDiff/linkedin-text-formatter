@@ -42,11 +42,11 @@
       display: flex; align-items: center; gap: 4px 12px; flex-wrap: wrap;
       font: 14px/1 ${FONT}; color: rgba(0,0,0,.75); box-sizing: border-box; position: relative;
     }
-    /* Containers per place: outlined in posts, light grey in comments, none in messages. */
+    /* Containers per place: outlined in posts and messages, light grey in comments. */
     .wrap { font: 14px/1 ${FONT}; color: rgba(0,0,0,.75); }
     .wrap.post { margin: 4px 0 12px; padding: 8px 10px 6px; border: 1px solid rgba(0,0,0,.15); border-radius: 8px; background: #fff; }
-    .wrap.comment { margin: 6px 12px 4px; padding: 4px 6px; border-radius: 8px; background: rgba(0,0,0,.035); }
-    .wrap.message { margin: 0; padding: 8px 12px 4px; border-top: 1px solid rgba(0,0,0,.12); }
+    .wrap.comment { margin: 8px 12px 4px; padding: 4px 6px; border-radius: 8px; background: rgba(0,0,0,.035); }
+    .wrap.message { margin: 8px 12px 4px; padding: 8px 10px 6px; border: 1px solid rgba(0,0,0,.15); border-radius: 8px; background: #fff; }
     .wrap.hidden { display: none; }
     .bar.inline { align-items: flex-end; }
     .bar.row { gap: 4px 8px; color: rgba(0,0,0,.6); }

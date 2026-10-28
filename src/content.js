@@ -44,6 +44,29 @@
     return a;
   }
 
+  // One stylesheet per document/shadow root that hides adopted ::before bars.
+  const hiddenIn = new WeakSet();
+  function hideBeforeIn(root) {
+    if (hiddenIn.has(root)) return;
+    hiddenIn.add(root);
+    const style = document.createElement('style');
+    style.textContent = '[data-ltf-adopt]::before { visibility: hidden !important; }';
+    (root.head || root).appendChild(style);
+  }
+
+  // The comment box's visible outline: the nearest ancestor of the editor with
+  // a border and rounded corners, looking a few levels past the box we found.
+  function roundedAround(ed, box) {
+    let stop = box;
+    for (let i = 0; i < 3 && stop.parentElement && stop.parentElement !== document.body; i++) stop = stop.parentElement;
+    for (let a = ed.parentElement; a; a = a.parentElement) {
+      const cs = getComputedStyle(a);
+      if (a.contains(box) && parseFloat(cs.borderTopWidth) > 0 && parseFloat(cs.borderTopLeftRadius) > 0) return a;
+      if (a === stop) break;
+    }
+    return box;
+  }
+
   class Controller {
     constructor(editor, ctx) {
       this.editor = editor;
@@ -73,6 +96,7 @@
         case 'inline':
           return outerWrapper(ed);
         case 'row': {
+          if (this.ctx.rowInside) return ed.closest(this.ctx.rowInside);
           if (this.ctx.rowBefore) {
             const form = ed.closest('form, .msg-form');
             return (form && form.querySelector(this.ctx.rowBefore)) || null;
@@ -84,8 +108,11 @@
             const btn = a.querySelector(this.ctx.rowNear);
             if (!btn) continue;
             this.box_ = a;
-            let row = btn;
-            while (row.parentElement !== a) row = row.parentElement;
+            // Above the text: go in at the level of the rounded outline, whose
+            // children stack; deeper levels lay the text and icons side by side.
+            const parent = this.ctx.rowAboveText ? (this.rounded_ = roundedAround(ed, a)) : a;
+            let row = this.ctx.rowAboveText ? ed : btn;
+            while (row.parentElement !== parent) row = row.parentElement;
             return row;
           }
           return null;
@@ -99,8 +126,31 @@
       const host = this.toolbar.host;
       const t = this.target();
       if (!t) return;
-      if (this.layout === 'inline' || this.layout === 'row') {
+      if (this.layout === 'row' && this.ctx.rowInside) {
+        if (t.firstChild !== host) t.prepend(host);
+        // The container lays out the text and its expand button side by side;
+        // let it wrap so the toolbar gets a full-width line of its own.
+        const cs = getComputedStyle(t);
+        if (cs.display.includes('flex') && !cs.flexDirection.startsWith('column')) {
+          t.style.flexWrap = 'wrap';
+          t.style.alignContent = 'flex-start';
+          host.style.flex = '0 0 100%';
+          // The text area may ask for the full width, which would push the
+          // expand button onto a hidden third line; let it shrink to share the
+          // second line with it. (min-width 1px keeps it off the toolbar's line.)
+          const text = [...t.children].find((c) => c !== host && c.contains(this.editor));
+          if (text) Object.assign(text.style, { flex: '1 1 0%', minWidth: '1px', width: 'auto' });
+        }
+      } else if (this.layout === 'inline' || this.layout === 'row') {
         if (host.nextSibling !== t) t.parentNode.insertBefore(host, t);
+        // If that level is still a row, give the toolbar a full line of its own.
+        if (this.ctx.rowAboveText) {
+          const cs = getComputedStyle(t.parentNode);
+          host.style.display = 'block';
+          host.style.flex = '0 0 100%';
+          host.style.width = '100%';
+          if (cs.display.includes('flex') && !cs.flexDirection.startsWith('column') && cs.flexWrap === 'nowrap') t.parentNode.style.flexWrap = 'wrap';
+        }
       } else if (host.parentNode !== t) {
         t.appendChild(host);
       }
@@ -115,6 +165,9 @@
       ed.addEventListener('input', () => this.refresh());
       ed.addEventListener('focus', () => this.refresh());
       ed.addEventListener('blur', () => { this.typing.clear(); setTimeout(() => this.refresh(), 150); });
+      // :focus-within styles change without a class flip; re-read the border on any focus move.
+      ed.addEventListener('focusin', () => requestAnimationFrame(() => this.syncBorder()));
+      ed.addEventListener('focusout', () => requestAnimationFrame(() => this.syncBorder()));
 
       // Keyboard shortcuts.
       ed.addEventListener('keydown', (e) => {
@@ -152,12 +205,77 @@
       const focused = E.isFocused(ed);
       // Comments keep the pill (and its counter) visible while there's a draft.
       const hasDraft = this.ctx.limit && E.toText(ed).trim().length > 0;
-      if (this.layout === 'row') this.toolbar.setVisible(!this.ctx.showOnDraft || hasDraft || this.toolbar.menuOpen);
+      if (this.layout === 'row') {
+        const show = !this.ctx.showOnDraft || hasDraft || this.toolbar.menuOpen ||
+          (this.ctx.rowAboveText && (focused || this.toolbar.hovered));
+        this.toolbar.setVisible(show);
+        if (show && this.ctx.rowAboveText) this.fitCorners();
+      }
       else this.toolbar.place(this.box, focused || this.toolbar.hovered || this.toolbar.menuOpen || hasDraft);
+    }
+
+    // Inside the rounded comment box: same gap on top as on the sides, and
+    // corners concentric with the box's (inner radius = outer radius - gap).
+    fitCorners() {
+      const box = this.box_, wrap = this.toolbar.wrap;
+      if (!box) return;
+      const rounded = this.rounded_ || box;
+      const bs = getComputedStyle(rounded), b = rounded.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+      if (!w.width) return;
+      const side = w.left - b.left - parseFloat(bs.borderLeftWidth);
+      const top = w.top - b.top - parseFloat(bs.borderTopWidth);
+      const mt = parseFloat(getComputedStyle(wrap).marginTop) || 0;
+      if (Math.abs(top - side) > 0.5) wrap.style.marginTop = `${Math.max(0, mt + side - top)}px`;
+      const r = parseFloat(bs.borderTopLeftRadius) - side;
+      wrap.style.borderRadius = `${Math.max(4, r)}px`;
+    }
+
+    // LinkedIn's line above the message field is two layers: a grey top border
+    // and a ::before bar that turns green on focus. Hide both on the target and
+    // draw them live on the toolbar's host instead, so the toolbar sits under the line.
+    syncBorder() {
+      const t = this.layout === 'row' && this.ctx.adoptTopBorder && this.target();
+      if (!t) return;
+      if (this.borderTarget !== t) {
+        this.origBorderColor = t.style.getPropertyValue('border-top-color');
+        hideBeforeIn(t.getRootNode());
+        t.setAttribute('data-ltf-adopt', '');
+      }
+      t.style.removeProperty('border-top-color');
+      if (this.origBorderColor) t.style.setProperty('border-top-color', this.origBorderColor);
+      const cs = getComputedStyle(t);
+      const host = this.toolbar.host;
+      host.style.display = 'block';
+      const wrap = host.style;
+      wrap.borderTop = `${cs.borderTopWidth} ${cs.borderTopStyle} ${cs.borderTopColor}`;
+      wrap.boxShadow = '';
+      // The ::before bar keeps its own opacity/transform; we only set visibility.
+      const b = getComputedStyle(t, '::before');
+      const h = parseFloat(b.height) || 0;
+      const shown = b.content !== 'none' && b.display !== 'none' && parseFloat(b.opacity) > 0 && h > 0 &&
+        !/^matrix\(0,/.test(b.transform) && !/rgba\(\d+, \d+, \d+, 0\)|transparent/.test(b.backgroundColor);
+      if (shown) {
+        wrap.borderTopColor = b.backgroundColor;
+        if (h > 1) wrap.boxShadow = `inset 0 ${h - 1}px 0 0 ${b.backgroundColor}`;
+      }
+      // !important: LinkedIn's focus colour may itself be !important.
+      t.style.setProperty('border-top-color', 'transparent', 'important');
+      if (this.borderTarget !== t) {
+        this.borderObs?.disconnect();
+        this.borderTarget = t;
+        // LinkedIn flips the colour by toggling a class, sometimes with a transition.
+        this.borderObs = new MutationObserver(() => this.syncBorder());
+        this.borderObs.observe(t, { attributes: true, attributeFilter: ['class'] });
+        const sync = () => this.syncBorder();
+        t.addEventListener('transitionend', sync);
+        t.addEventListener('focusin', () => requestAnimationFrame(sync));
+        t.addEventListener('focusout', () => requestAnimationFrame(sync));
+      }
     }
 
     refresh() {
       if (!this.editor.isConnected) return;
+      this.syncBorder();
       if (this.ctx.limit) {
         const w = CONFIG.newlineWeight[this.ctx.id] ?? 1;
         this.toolbar.setCount(U.linkedInLength(E.toText(this.editor), w));
@@ -208,6 +326,7 @@
         removeEventListener('resize', this.reposition);
         this.ro.disconnect();
       }
+      this.borderObs?.disconnect();
       this.toolbar.destroy();
       return false;
     }

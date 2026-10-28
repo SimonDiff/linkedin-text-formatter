@@ -21,9 +21,13 @@
         containers: '.msg-form, .msg-overlay-conversation-bubble, .msg-convo-wrapper, [class*="msg-form"], [class*="msg-overlay"]',
         hints: /write a message|scrivi un messaggio|message/i,
         box: '.msg-form__msg-content-container, .msg-form__contenteditable',
-        // Own row right above the message box.
+        // Row right above the message box. (Inserting inside LinkedIn's
+        // container broke its expand button, so we stay outside it.) The
+        // container's top line (grey, green on focus) is moved onto the
+        // toolbar's host, so the outlined toolbar sits below that line.
         layout: 'row',
         rowBefore: '.msg-form__msg-content-container',
+        adoptTopBorder: true,
         limit: null,
       },
       {
@@ -31,11 +35,12 @@
         containers: '.comments-comment-box, .comments-comment-texteditor, [class*="comments-comment-box"], [class*="comment-texteditor"], [class*="comments-comment"]',
         hints: /add a comment|add a reply|comment|reply|commento|rispondi/i,
         box: '.comments-comment-box__form-container, .comments-comment-texteditor, .comments-comment-box__form, form',
-        // Own row inside the comment box, above the emoji / GIF / photo row. Class
-        // names are hashed, so that row is found through the emoji button's label.
-        // Shown once you start typing, like LinkedIn's own footer row.
+        // Own row inside the comment box, above the text. The box is found through
+        // the emoji button's label (class names are hashed). Shown while the box
+        // is focused or holds a draft, like LinkedIn's own footer row.
         layout: 'row',
         rowNear: 'button[aria-label*="emoji" i]',
+        rowAboveText: true,
         showOnDraft: true,
         counterBelow: true,
         limit: 1250,

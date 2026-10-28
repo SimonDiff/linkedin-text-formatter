@@ -10,7 +10,7 @@ LinkedIn has no real bold or italic, so the toolbar swaps letters for Unicode lo
 |---|---|---|
 | "Start a post" modal | Outlined panel on top of the editor, full width | x / 3,000 |
 | Comment and reply boxes | Compact row inside the box, above the emoji / GIF / photo icons, once you start typing | x / 1,250 under the box, where LinkedIn shows its own "-N" when you go over |
-| Floating chat windows and the Messaging page | Row above the message box | none |
+| Floating chat windows and the Messaging page | First row inside the message box, below its top line | none |
 
 If LinkedIn's layout can't be matched, the toolbar falls back to a small pill floating above the box.
 
