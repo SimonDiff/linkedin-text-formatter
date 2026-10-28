@@ -1,14 +1,52 @@
 # LinkedIn DiffStyle
 
-A Chrome extension that adds a formatting toolbar to LinkedIn posts, comments and messages.
-
-LinkedIn has no real bold or italic, so the toolbar swaps letters for Unicode look-alikes
-(𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤, u̲n̲d̲e̲r̲l̲i̲n̲e̲ …) right inside the editor. No more copy, convert, paste.
-It also shows an always-visible character counter, where LinkedIn only warns you once you're over.
+A Chrome extension that adds a formatting toolbar and a permanent character counter to LinkedIn posts,
+comments and messages.
 
 | Post | Comment | Message |
 |---|---|---|
 | ![Toolbar in the post composer](docs/screenshots/post.png) | ![Toolbar in a comment box](docs/screenshots/comment.png) | ![Toolbar in a message window](docs/screenshots/message.png) |
+
+## Features
+
+- **Always-visible character counter** on posts (`x / 3,000`) and comments (`x / 1,250`). It turns amber at 90% and red when you're over.
+- **Bold, italic, underline and strikethrough**, right inside LinkedIn's editor. No copy, convert, paste.
+- **More styles** in the `Aa` menu: serif bold, script, double-struck and monospace.
+- **UPPERCASE and lowercase** in one click.
+- **Bulleted and numbered lists.**
+- **Clear formatting** turns stylized text back into plain letters, including text you pasted in.
+- **Typing mode:** click a style with nothing selected and what you type next comes out styled.
+- **Keyboard shortcuts:** ⌘/Ctrl+B, ⌘/Ctrl+I, ⌘/Ctrl+U.
+- **Accents survive:** é, ñ, ü and friends keep their accent when styled.
+- **Styles combine and toggle:** Bold then Italic gives bold italic, Bold again removes it.
+- Works in the post composer, comment and reply boxes, floating chat windows and the Messaging page.
+
+### Why a permanent counter?
+
+Sometimes an argument in the comments incenses me and I start writing an essay. LinkedIn's own counter
+only shows up once I'm already over the limit, which is the worst possible moment to find out.
+A counter that's there from the first word lets me gauge my verbosity before it's too late.
+
+Note that LinkedIn counts every stylized letter as 2 characters, and so does this counter.
+
+## A word of warning about stylized text
+
+LinkedIn has no real bold or italic. The **Stylized** buttons swap your letters for Unicode symbols
+that only *look* like letters (𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 …), and that has a cost:
+
+- **Search:** LinkedIn search and Google don't match 𝗿𝗲𝗰𝗿𝘂𝗶𝘁𝗲𝗿 to "recruiter", so those words can't be found.
+- **Algorithm:** the feed can't read those words either, which may hurt how your post is understood and shown.
+- **Accessibility:** screen readers skip them or spell them out symbol by symbol ("mathematical bold small r…").
+
+The **Safe** group (case and lists) uses plain characters and has none of these problems.
+That's why the toolbar keeps the two groups apart.
+
+> [!NOTE]
+> **Honestly?** I know most people won't bother with any of this. Nobody has time to proofread what ChatGPT
+> tells them to post these days, let alone format it, and ChatGPT writes plain text anyway.
+> As for the algorithm, going viral was never really the goal for me. I just like my comments and messages
+> to look the way I want. If you feel the same, use stylized text for a few words that deserve it,
+> and keep keywords, hashtags and whole paragraphs plain.
 
 ## Install (Chrome)
 
@@ -24,33 +62,6 @@ The extension isn't on the Chrome Web Store yet. For now you install it from thi
 
 **To update:** download the ZIP again, replace the old folder with the new one, then click the ↻ reload icon on the
 extension's card in `chrome://extensions` and reload LinkedIn.
-
-> [!WARNING]
-> **Stylized text hurts reach, search and accessibility.** Bold, italic, script and the other stylized styles
-> aren't real formatting: they replace your letters with different Unicode symbols that only *look* like letters.
-> - **Search:** LinkedIn search and Google don't match 𝗿𝗲𝗰𝗿𝘂𝗶𝘁𝗲𝗿 to "recruiter", so those words can't be found.
-> - **Algorithm:** LinkedIn's feed can't read those words either, which may hurt how your post is understood and shown.
-> - **Accessibility:** screen readers skip them or spell them out symbol by symbol ("mathematical bold small r…").
->
-> Keep stylized text to a few words you want to stand out, never whole paragraphs, keywords or hashtags.
-> Messages aren't searched or ranked, so there it only affects accessibility.
-
-## How it works
-
-The toolbar has two groups, plus a **Clear** button.
-
-- **Safe**: UPPERCASE, lowercase, bulleted and numbered lists. Plain characters, so LinkedIn search,
-  Google and screen readers read them normally.
-- **Stylized** ⚠️: Bold, Italic, Underline, Strikethrough, plus Serif bold, Script, Double-struck and Monospace
-  in the `Aa` menu. Unicode look-alikes with the downsides above.
-  Styles combine (Bold + Italic) and toggle (Bold again removes it).
-- **Clear** turns stylized text back into plain letters. Also handy for pasted text.
-
-Select text and click a button, or click a stylized button with nothing selected to style what you type next.
-Shortcuts: ⌘/Ctrl+B, ⌘/Ctrl+I, ⌘/Ctrl+U. Accented letters (é, ñ …) keep their accent.
-
-**The counter** shows `x / 3,000` on posts and `x / 1,250` on comments. LinkedIn counts every stylized letter
-as 2 characters, and so does the counter.
 
 ## Roadmap
 
