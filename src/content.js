@@ -44,6 +44,15 @@
     return a;
   }
 
+  function scrollParent(el) {
+    // Through shadow roots too: the post modal may live in one.
+    const up = (n) => n.parentElement || n.getRootNode().host || null;
+    for (let a = up(el); a; a = up(a)) {
+      if (/auto|scroll|overlay/.test(getComputedStyle(a).overflowY)) return a;
+    }
+    return document.scrollingElement || document.documentElement;
+  }
+
   // One stylesheet per document/shadow root that hides adopted ::before bars.
   const hiddenIn = new WeakSet();
   function hideBeforeIn(root) {
@@ -147,7 +156,12 @@
         // Posts: if the toolbar still ends up inside the area that scrolls,
         // keep it pinned to the top while a long post scrolls under it.
         // (flow-root keeps the bar's margins inside the white background.)
-        if (this.layout === 'inline') Object.assign(host.style, { position: 'sticky', top: '0', zIndex: '2', background: '#fff', display: 'flow-root' });
+        // Sticking happens below the scroll area's top padding, which would
+        // leave a strip of scrolling text above the bar; a negative top cancels it.
+        if (this.layout === 'inline') {
+          const pad = parseFloat(getComputedStyle(scrollParent(host)).paddingTop) || 0;
+          Object.assign(host.style, { position: 'sticky', top: `${-pad}px`, zIndex: '2', background: '#fff', display: 'flow-root' });
+        }
         // If that level is still a row, give the toolbar a full line of its own.
         if (this.ctx.rowAboveText) {
           const cs = getComputedStyle(t.parentNode);
