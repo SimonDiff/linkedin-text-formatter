@@ -144,6 +144,10 @@
         }
       } else if (this.layout === 'inline' || this.layout === 'row') {
         if (host.nextSibling !== t) t.parentNode.insertBefore(host, t);
+        // Posts: if the toolbar still ends up inside the area that scrolls,
+        // keep it pinned to the top while a long post scrolls under it.
+        // (flow-root keeps the bar's margins inside the white background.)
+        if (this.layout === 'inline') Object.assign(host.style, { position: 'sticky', top: '0', zIndex: '2', background: '#fff', display: 'flow-root' });
         // If that level is still a row, give the toolbar a full line of its own.
         if (this.ctx.rowAboveText) {
           const cs = getComputedStyle(t.parentNode);
