@@ -44,6 +44,9 @@
         showOnDraft: true,
         counterBelow: true,
         limit: 1250,
+        // Same TipTap editor as posts, bold-only schema. Assumed (not yet
+        // checked) that published comments keep the bold.
+        nativeBold: true,
       },
       {
         id: 'post',
@@ -52,6 +55,9 @@
         hints: /share your thoughts|what do you want to talk about|creating content|create a post|condividi|di cosa vuoi parlare/i,
         layout: 'inline',
         limit: 3000,
+        // The post editor (TipTap) has a real bold mark that survives publishing,
+        // so Bold here is LinkedIn's own bold, not Unicode. Comments too.
+        nativeBold: true,
       },
     ],
 

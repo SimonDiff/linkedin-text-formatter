@@ -29,6 +29,8 @@
   // ones swap letters for Unicode look-alikes.
   const GROUPS = {
     safe: { title: 'Safe', long: 'Safe styles are plain characters, so LinkedIn search, Google and screen readers read them normally.', ids: ['upper', 'lower', 'bullets', 'numbers'] },
+    // In editors with real bold, Bold joins the Safe group (see nativeBold).
+    safeNative: { title: 'Safe', long: 'Safe styles keep plain characters, so LinkedIn search, Google and screen readers read them normally. Bold here is LinkedIn’s own bold, not look-alike letters.' },
     stylized: { title: 'Stylized', long: 'Stylized styles use look-alike Unicode letters. They look great, but search and screen readers can’t read them as words, so use them sparingly.', ids: ['bold', 'italic', 'underline', 'strike'] },
   };
 
@@ -106,7 +108,7 @@
       position: relative; font: 14px/1.4 ${FONT}; color: rgba(0,0,0,.75); min-width: 180px; padding: 6px 0;
       background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 6px 16px rgba(0,0,0,.16);
     }
-    .pop[hidden] { display: none; }
+    .pop[hidden], button[hidden] { display: none !important; }
     .pop button { display: flex; width: 100%; justify-content: flex-start; border-radius: 0; height: 34px; padding: 0 14px; font-size: 15px; }
     .pop .note { font-size: 12px; color: rgba(0,0,0,.55); padding: 8px 14px 4px; border-top: 1px solid rgba(0,0,0,.08); margin-top: 4px; max-width: 240px; }
     .about { padding: 12px 16px; max-width: 280px; font-size: 13px; }
@@ -178,7 +180,8 @@
     // onAction(styleId) is called on click; the toolbar knows nothing about editors.
     // variant: 'post' | 'comment' | 'message' (container look).
     // counterBelow: render the counter in its own element (placed by the caller).
-    constructor({ layout, variant, limit, counterBelow, onAction }) {
+    // nativeBold: Bold is the editor's real bold, shown in the Safe group.
+    constructor({ layout, variant, limit, counterBelow, nativeBold, onAction }) {
       this.layout = layout;
       this.limit = limit;
       this.onAction = onAction;
@@ -191,15 +194,17 @@
       this.host.style.display = layout === 'floating' ? 'contents' : 'block';
 
       const btn = (id) => `<button type="button" data-style="${id}" title="${tip(id)}" aria-label="${STYLES[id].label}">${ICONS[id]}</button>`;
+      // Two Bold buttons, real (Safe) and Unicode (Stylized); setNativeBold shows one.
+      const nativeBtn = `<button type="button" data-style="bold" data-native title="Bold (⌘/Ctrl+B), LinkedIn’s own bold" aria-label="Bold">${ICONS.bold}</button>`;
       const infoBtn = (pop, label) => `<button type="button" class="i" data-pop="${pop}" title="${label}" aria-label="${label}">${ICONS.info}</button>`;
-      const group = (key, extra = '') => {
+      const group = (key, extra = '', first = '') => {
         const g = GROUPS[key];
         return `<div class="group" role="group" aria-label="${g.title}">
           <span class="ghead"><span class="gtitle">${g.title}</span>${infoBtn(key, `What “${g.title}” means`)}</span>
-          <span class="gbtns">${g.ids.map(btn).join('')}${extra}</span></div>`;
+          <span class="gbtns">${first}${g.ids.map(btn).join('')}${extra}</span></div>`;
       };
       const moreBtn = `<button type="button" data-pop="more" title="More stylized fonts" aria-haspopup="true">${ICONS.more}</button>`;
-      const clearBtn = `<button type="button" class="labeled" data-style="clear" title="Turn stylized letters back into plain text">${ICONS.clear}${compact ? 'Clear' : 'Clear formatting'}</button>`;
+      const clearBtn = `<button type="button" class="labeled" data-style="clear" title="${nativeBold ? 'Remove bold and turn stylized letters back into plain text' : 'Turn stylized letters back into plain text'}">${ICONS.clear}${compact ? 'Clear' : 'Clear formatting'}</button>`;
       const aboutBtn = `<button type="button" class="badge" data-pop="about" title="About LinkedIn DiffStyle" aria-label="About LinkedIn DiffStyle">${ICONS.badge}</button>`;
       const count = limit && !counterBelow ? '<span class="count" aria-live="polite"></span>' : '';
       const classes = ['bar', layout, compact && 'compact', inlineTitles && 'inlinetitles', layout === 'floating' && 'hidden'].filter(Boolean).join(' ');
@@ -207,7 +212,7 @@
       shadow.innerHTML = `<style>${CSS}</style>
         <div class="wrap ${layout === 'floating' ? '' : variant}">
           <div class="${classes}" role="toolbar" aria-label="Text formatting">
-            ${group('safe')}
+            ${group('safe', '', nativeBold ? nativeBtn : '')}
             <span class="vsep"></span>
             ${group('stylized', moreBtn)}
             <span class="vsep"></span>
@@ -235,7 +240,7 @@
           </div>`,
           (e, pop) => { if (e.target.closest('a')) setTimeout(() => pop.toggle(null, false), 0); },
         ),
-        safe: new Popover(`<div class="explain">${GROUPS.safe.long}</div>`, () => {}),
+        safe: new Popover(`<div class="explain">${(nativeBold ? GROUPS.safeNative : GROUPS.safe).long}</div>`, () => {}),
         stylized: new Popover(`<div class="explain">${GROUPS.stylized.long}</div>`, () => {}),
       };
       this.more = this.pops.more;
@@ -264,8 +269,15 @@
         }
         run(b.dataset.style);
       });
+      this.setNativeBold(!!nativeBold);
       this.host.addEventListener('mouseenter', () => (this.hovered = true));
       this.host.addEventListener('mouseleave', () => (this.hovered = false));
+    }
+
+    // Real bold in Safe, or (fallback) Unicode bold in Stylized.
+    setNativeBold(on) {
+      for (const b of this.bar.querySelectorAll('button[data-style="bold"]')) b.hidden = b.hasAttribute('data-native') ? !on : on;
+      if (!on) this.pops.safe.el.innerHTML = `<div class="explain">${GROUPS.safe.long}</div>`;
     }
 
     closePops() { for (const p of Object.values(this.pops)) p.toggle(null, false); }

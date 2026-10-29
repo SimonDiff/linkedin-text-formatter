@@ -141,7 +141,58 @@
     }
   }
 
+  // ---- Native bold (editors whose schema has a real bold mark) ------------
+  const inBold = (node, editor) => {
+    for (let el = node.parentElement; el && el !== editor; el = el.parentElement) {
+      if (el.nodeName === 'STRONG' || el.nodeName === 'B') return true;
+    }
+    return false;
+  };
+
+  // 'all' | 'some' | 'none': how much of the selection is real bold. A caret
+  // counts as 'all' when it sits inside bold text.
+  function boldState(editor) {
+    const s = selectionIn(editor);
+    if (!s) return 'none';
+    const r = s.range;
+    if (r.collapsed) return r.startContainer.nodeType === Node.TEXT_NODE && inBold(r.startContainer, editor) ? 'all' : 'none';
+    let bold = 0, plain = 0;
+    const w = editor.ownerDocument.createTreeWalker(r.commonAncestorContainer.nodeType === Node.TEXT_NODE ? r.commonAncestorContainer.parentNode : r.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) {
+      if (!r.intersectsNode(n)) continue;
+      const from = n === r.startContainer ? r.startOffset : 0;
+      const to = n === r.endContainer ? r.endOffset : n.data.length;
+      if (!n.data.slice(from, to).trim()) continue; // spaces between bold words don't count
+      if (inBold(n, editor)) bold++; else plain++;
+    }
+    return bold && !plain ? 'all' : bold ? 'some' : 'none';
+  }
+
+  // Toggle real bold on the selection, the way the browser's own Bold does;
+  // the editor reads the change into its model. Resolves to { adding, ok },
+  // ok = the selection ended up in the state we asked for.
+  async function toggleNativeBold(editor) {
+    editor.focus();
+    // ProseMirror reads a selection change on its own schedule; let it catch
+    // up first, or the command lands on the previous selection.
+    await new Promise((r) => setTimeout(r, 30));
+    const want = boldState(editor) === 'all' ? 'none' : 'all';
+    editor.ownerDocument.execCommand('bold');
+    // Let the editor parse the DOM change and re-render it.
+    await new Promise((r) => setTimeout(r, 60));
+    return { adding: want === 'all', ok: boldState(editor) === want };
+  }
+
+  // Remove real bold from the selection (part of Clear formatting).
+  async function clearNativeBold(editor) {
+    if (boldState(editor) === 'none') return;
+    editor.focus();
+    await new Promise((r) => setTimeout(r, 30));
+    editor.ownerDocument.execCommand('removeFormat');
+    await new Promise((r) => setTimeout(r, 60));
+  }
+
   root.LTF = Object.assign(root.LTF || {}, {
-    editor: { getSel, isFocused, toText, selectedText, selectionIn, expandToLines, selectAll, replaceSelection },
+    editor: { getSel, isFocused, toText, selectedText, selectionIn, expandToLines, selectAll, replaceSelection, boldState, toggleNativeBold, clearNativeBold },
   });
 })(globalThis);

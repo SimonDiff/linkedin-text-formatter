@@ -78,6 +78,7 @@
         variant: ctx.id,
         limit: ctx.limit,
         counterBelow: ctx.counterBelow && this.layout === 'row',
+        nativeBold: !!ctx.nativeBold,
         onAction: (id) => this.run(id),
       });
       this.mount();
@@ -283,15 +284,38 @@
       const sel = E.selectedText(this.editor);
       const active = new Set(this.typing);
       if (sel) for (const id of [...INLINE_STYLES, 'bullets', 'numbers']) if (U.isActive(sel, id)) active.add(id);
+      if (this.native() && E.boldState(this.editor) === 'all') active.add('bold');
       this.toolbar.setActive(active);
       this.place();
     }
 
-    run(id) {
+    // Real bold is used where the editor supports it, until it fails once.
+    native() { return this.ctx.nativeBold && !this.nativeFailed; }
+
+    async run(id) {
       const ed = this.editor;
       if (!E.selectionIn(ed)) { ed.focus(); }
       const s = E.selectionIn(ed);
       const collapsed = !s || s.range.collapsed;
+
+      if (id === 'bold' && this.native()) {
+        if (collapsed) { this.toolbar.hint('Select some text first'); return; }
+        // Unicode bold from before (or pasted in) becomes plain letters first.
+        const sel = E.selectedText(ed);
+        if (U.isActive(sel, 'bold')) E.replaceSelection(ed, U.apply(sel, 'bold'));
+        const { adding, ok } = await E.toggleNativeBold(ed);
+        if (!ok && adding) {
+          // The editor didn't take it: fall back to Unicode bold from now on.
+          this.nativeFailed = true;
+          this.toolbar.setNativeBold(false);
+          log('native bold not supported here, using Unicode');
+          return this.run(id);
+        }
+        this.refresh();
+        return;
+      }
+
+      if (id === 'clear' && this.native() && !collapsed) await E.clearNativeBold(ed);
 
       if (U.STYLES[id].kind === 'list') {
         E.expandToLines(ed);
