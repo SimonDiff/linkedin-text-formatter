@@ -10,7 +10,7 @@ comments and messages.
 ## Features
 
 - **Always-visible character counter** on posts (`x / 3,000`) and comments (`x / 1,250`). It turns amber at 90% and red when you're over.
-- **Real bold in posts.** LinkedIn's post editor supports one real format, bold, and DiffStyle uses it there.
+- **Real bold in posts and comments.** LinkedIn's editor there supports one real format, bold, and DiffStyle uses it.
   It looks the same as Unicode bold but stays plain text, so search and screen readers have no trouble with it.
 - **Bold, italic, underline and strikethrough** everywhere else, right inside LinkedIn's editor. No copy, convert, paste.
 - **More styles** in the `Aa` menu: serif bold, script, double-struck and monospace.
@@ -33,7 +33,7 @@ Note that LinkedIn counts every stylized letter as 2 characters, and so does thi
 
 ## A word of warning about stylized text
 
-Apart from bold in posts, LinkedIn has no real formatting: no italic, no underline, and no real bold in comments or messages.
+Apart from bold in posts and comments, LinkedIn has no real formatting: no italic, no underline, and no real bold in messages.
 The **Stylized** buttons swap your letters for Unicode symbols
 that only *look* like letters (𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 …), and that has a cost:
 
@@ -41,7 +41,7 @@ that only *look* like letters (𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 …), 
 - **Algorithm:** the feed can't read those words either, which may hurt how your post is understood and shown.
 - **Accessibility:** screen readers skip them or spell them out symbol by symbol ("mathematical bold small r…").
 
-The **Safe** group (case and lists, plus bold in posts) uses plain characters and has none of these problems.
+The **Safe** group (case and lists, plus bold in posts and comments) uses plain characters and has none of these problems.
 That's why the toolbar keeps the two groups apart.
 
 > [!NOTE]
