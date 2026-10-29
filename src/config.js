@@ -52,6 +52,9 @@
         hints: /share your thoughts|what do you want to talk about|creating content|create a post|condividi|di cosa vuoi parlare/i,
         layout: 'inline',
         limit: 3000,
+        // The post editor (TipTap) has a real bold mark that survives publishing,
+        // so Bold here is LinkedIn's own bold, not Unicode.
+        nativeBold: true,
       },
     ],
 
