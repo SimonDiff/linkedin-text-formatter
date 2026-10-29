@@ -5,6 +5,8 @@
 .Spotlight-V100
 .Trashes
 Icon?
+!icons/
+!icons/icon32.png
 
 # Editors
 .vscode/

@@ -5,6 +5,7 @@
   "description": "Bold, italic, lists and more for LinkedIn posts, comments and messages, plus an always-visible character counter.",
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
