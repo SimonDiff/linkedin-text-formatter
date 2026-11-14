@@ -16,11 +16,11 @@
     underline: svg('<path d="M7 4.5v6.5a5 5 0 0 0 10 0V4.5M5 20h14"/>'),
     strike: svg('<path d="M16.5 7c-.6-1.6-2.3-2.5-4.4-2.5-2.6 0-4.4 1.4-4.4 3.4 0 1.5.9 2.5 2.6 3.1M4 12h16M8 16.8c.6 1.7 2.3 2.7 4.5 2.7 2.7 0 4.5-1.4 4.5-3.5 0-.8-.3-1.5-.8-2"/>'),
     upper: svg('<path d="M2.5 18l4.25-12L11 18M4 14h5.5M13 18l4.25-12L21.5 18M14.5 14H20"/>'),
-    lower: svg('<circle class="f" cx="7.5" cy="14.5" r="3.5"/><path d="M11 11v7"/><circle class="f" cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>'),
+    lower: svg('<circle cx="7.5" cy="14.5" r="3.5"/><path d="M11 11v7"/><circle cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>'),
     bullets: svg('<circle class="f" cx="4.5" cy="6.5" r="1.5"/><circle class="f" cx="4.5" cy="12" r="1.5"/><circle class="f" cx="4.5" cy="17.5" r="1.5"/><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/>'),
     numbers: svg('<path d="M3.5 5l1.5-1v5M3.5 9h3M3.5 15.2a1.5 1.5 0 0 1 3 .3c0 1-3 2-3 3.5h3M10 6.5h10M10 12h10M10 17.5h10"/>'),
     clear: svg('<path d="M13.5 4.5l6 6-8 8h-5l-2.5-2.5z M9 9l6 6M11 19.5h8.5"/>'),
-    more: svg('<path d="M2.5 18l4.25-12L11 18M4 14h5.5"/><circle class="f" cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>') +
+    more: svg('<path d="M2.5 18l4.25-12L11 18M4 14h5.5"/><circle cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>') +
       '<svg viewBox="0 0 10 10" width="8" height="8" aria-hidden="true" style="margin-left:1px"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     // Filled starburst with the "i" cut out (evenodd), for the credits button.
     badge: '<svg viewBox="0 0 16 16" width="18" height="18"><path fill-rule="evenodd" d="M8.00 0.40L9.58 2.11L11.80 1.42L12.31 3.69L14.58 4.20L13.89 6.42L15.60 8.00L13.89 9.58L14.58 11.80L12.31 12.31L11.80 14.58L9.58 13.89L8.00 15.60L6.42 13.89L4.20 14.58L3.69 12.31L1.42 11.80L2.11 9.58L0.40 8.00L2.11 6.42L1.42 4.20L3.69 3.69L4.20 1.42L6.42 2.11Z M8 3.9a1 1 0 1 0 0 2a1 1 0 1 0 0-2Z M7.2 6.9h1.6v5H7.2Z"/></svg>',
