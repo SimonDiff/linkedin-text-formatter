@@ -22,7 +22,7 @@ comments and messages.
 - **Bulleted and numbered lists.**
 - **Clear formatting** turns stylized text back into plain letters, including text you pasted in.
 - **Typing mode:** click a style with nothing selected and what you type next comes out styled.
-- **Keyboard shortcuts:** ⌘/Ctrl+B, ⌘/Ctrl+I, ⌘/Ctrl+U. Hover any button to see its name and shortcut.
+- **Keyboard shortcuts:** ⌘B, ⌘I, ⌘U on Mac; Ctrl+B, Ctrl+I, Ctrl+U on Windows and Linux. Hover any button to see its name and shortcut.
 - **Accents survive:** é, ñ, ü and friends keep their accent when styled.
 - **Styles combine and toggle:** Bold then Italic gives bold italic, Bold again removes it.
 - Works in the post composer, comment and reply boxes, floating chat windows and the Messaging page.

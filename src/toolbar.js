@@ -40,9 +40,10 @@
   const AUTHOR_URL = 'https://www.linkedin.com/in/simondiff/';
   const REPO_URL = 'https://github.com/SimonDiff/linkedin-text-formatter';
 
-  const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  const MAC = /Mac|iPhone|iPad/.test(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent);
   const KEYS = { bold: 'B', italic: 'I', underline: 'U' };
-  const shortcut = (id) => (KEYS[id] ? (MAC ? `⌘${KEYS[id]}` : `Ctrl+${KEYS[id]}`) : '');
+  // Keys as a list, drawn as key caps in the tooltip: ['⌘', 'B'] or ['Ctrl', 'B'].
+  const shortcut = (id) => (KEYS[id] ? [MAC ? '⌘' : 'Ctrl', KEYS[id]] : null);
 
   const FONT = '-apple-system, system-ui, "Segoe UI", Roboto, sans-serif';
   const CSS = `
@@ -111,7 +112,13 @@
       font: 600 12px/1.35 ${FONT}; color: #fff; background: #1d2226; border-radius: 4px;
       padding: 4px 8px; max-width: 240px; pointer-events: none;
     }
-    .tip .k { font-weight: 400; color: rgba(255,255,255,.7); }
+    .tip .name { display: flex; align-items: center; gap: 8px; }
+    .tip .keys { display: inline-flex; gap: 3px; }
+    .tip kbd {
+      font: 500 11px/1 ${FONT}; color: rgba(255,255,255,.85); min-width: 16px; height: 18px; padding: 0 4px;
+      box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,.3); border-bottom-width: 2px; border-radius: 4px;
+    }
     .tip .sub { display: flex; align-items: center; gap: 5px; font-weight: 400; color: rgba(255,255,255,.75); margin-top: 2px; }
     /* Orange "!" dot marking stylized (search/algorithm unsafe) styles. */
     .bang {
@@ -253,19 +260,19 @@
 
       // No title attributes: the toolbar draws its own tooltips (data-tip), so
       // the native ones don't double up. aria-label carries the name.
-      const tipHtml = (label, sub) => {
-        const [name, key] = label.split('\u0000');
-        return `${esc(name)}${key ? ` <span class="k">(${key})</span>` : ''}${sub ? `<span class="sub">${sub === WARN ? WARN_HTML : esc(sub)}</span>` : ''}`;
+      const tipHtml = (name, keys, sub) => {
+        const caps = keys ? `<span class="keys">${keys.map((k) => `<kbd>${esc(k)}</kbd>`).join('')}</span>` : '';
+        return `<span class="name">${esc(name)}${caps}</span>${sub ? `<span class="sub">${sub === WARN ? WARN_HTML : esc(sub)}</span>` : ''}`;
       };
       const button = (attrs, label, key, sub, icon) =>
-        `<button type="button" ${attrs} aria-label="${esc(label)}${sub ? `. ${esc(sub)}` : ''}" data-tip="${esc(tipHtml(`${label}\u0000${key}`, sub))}">${icon}</button>`;
+        `<button type="button" ${attrs} aria-label="${esc(label)}${key ? ` (${key.join('+')})` : ''}${sub ? `. ${esc(sub)}` : ''}" data-tip="${esc(tipHtml(label, key, sub))}">${icon}</button>`;
       const btn = (id, sub) => button(`data-style="${id}"`, STYLES[id].label, shortcut(id), sub, ICONS[id]);
       // Two Bold buttons, real (Safe) and Unicode (Stylized); setNativeBold shows one.
       const nativeBtn = button('data-style="bold" data-native', 'Bold', shortcut('bold'), 'LinkedIn’s own bold, safe for search', ICONS.bold);
-      const moreBtn = button('data-pop="more" aria-haspopup="true"', 'More fonts', '', WARN, ICONS.more);
-      const clearBtn = button('data-style="clear"', 'Clear formatting', '', nativeBold ? 'Removes bold and turns stylized letters back into plain text' : 'Turns stylized letters back into plain text', ICONS.clear);
+      const moreBtn = button('data-pop="more" aria-haspopup="true"', 'More fonts', null, WARN, ICONS.more);
+      const clearBtn = button('data-style="clear"', 'Clear formatting', null, nativeBold ? 'Removes bold and turns stylized letters back into plain text' : 'Turns stylized letters back into plain text', ICONS.clear);
       // Messages skip the credits badge: floating chat windows are too narrow for one line with it.
-      const aboutBtn = button('class="badge" data-pop="about"', 'About LinkedIn DiffStyle', '', '', ICONS.badge);
+      const aboutBtn = button('class="badge" data-pop="about"', 'About LinkedIn DiffStyle', null, '', ICONS.badge);
       const count = limit && !counterBelow ? '<span class="count" aria-live="polite"></span>' : '';
       const classes = ['bar', layout, compact && 'compact', layout === 'floating' && 'hidden'].filter(Boolean).join(' ');
 
@@ -395,5 +402,5 @@
     destroy() { for (const p of Object.values(this.pops)) p.remove(); this.tip.remove(); this.host.remove(); this.countHost?.remove(); }
   }
 
-  root.LTF = Object.assign(root.LTF || {}, { Toolbar });
+  root.LTF = Object.assign(root.LTF || {}, { Toolbar, MAC });
 })(globalThis);
