@@ -47,7 +47,7 @@ that only *look* like letters (𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 …), 
 - **Accessibility:** screen readers skip them or spell them out symbol by symbol ("mathematical bold small r…").
 
 The safe buttons on the left of the toolbar (case and lists, plus bold in posts) use plain characters and have none of these problems.
-That's why the toolbar keeps the two groups apart, with a divider between them, and why every stylized button says so when you hover it.
+That's why the toolbar keeps the two groups apart, with a divider between them, and why every stylized button shows an orange ! "Search/algorithm unsafe" when you hover it.
 
 > [!NOTE]
 > I know most people won't bother with any of this. Nobody has time to proofread what ChatGPT

@@ -34,7 +34,8 @@
   // their tooltips say so.
   const SAFE = ['upper', 'lower', 'bullets', 'numbers'];
   const STYLIZED = ['bold', 'italic', 'underline', 'strike'];
-  const WARN = 'Look-alike letters: search and screen readers can’t read them';
+  const WARN = 'Search/algorithm unsafe';
+  const WARN_HTML = `<span class="bang" aria-hidden="true">!</span>${WARN}`;
 
   const AUTHOR_URL = 'https://www.linkedin.com/in/simondiff/';
   const REPO_URL = 'https://github.com/SimonDiff/linkedin-text-formatter';
@@ -111,7 +112,15 @@
       padding: 4px 8px; max-width: 240px; pointer-events: none;
     }
     .tip .k { font-weight: 400; color: rgba(255,255,255,.7); }
-    .tip .sub { display: block; font-weight: 400; color: rgba(255,255,255,.75); margin-top: 1px; }
+    .tip .sub { display: flex; align-items: center; gap: 5px; font-weight: 400; color: rgba(255,255,255,.75); margin-top: 2px; }
+    /* Orange "!" dot marking stylized (search/algorithm unsafe) styles. */
+    .bang {
+      display: inline-flex; align-items: center; justify-content: center; flex: none;
+      width: 13px; height: 13px; border-radius: 50%; background: #e7a33e; color: #1d2226;
+      font: 800 10px/1 ${FONT};
+    }
+    .note .bang { margin-right: 6px; }
+    .note { display: flex; align-items: center; }
 
     .pop {
       position: relative; font: 14px/1.4 ${FONT}; color: rgba(0,0,0,.75); min-width: 180px; padding: 6px 0;
@@ -246,7 +255,7 @@
       // the native ones don't double up. aria-label carries the name.
       const tipHtml = (label, sub) => {
         const [name, key] = label.split('\u0000');
-        return `${esc(name)}${key ? ` <span class="k">(${key})</span>` : ''}${sub ? `<span class="sub">${esc(sub)}</span>` : ''}`;
+        return `${esc(name)}${key ? ` <span class="k">(${key})</span>` : ''}${sub ? `<span class="sub">${sub === WARN ? WARN_HTML : esc(sub)}</span>` : ''}`;
       };
       const button = (attrs, label, key, sub, icon) =>
         `<button type="button" ${attrs} aria-label="${esc(label)}${sub ? `. ${esc(sub)}` : ''}" data-tip="${esc(tipHtml(`${label}\u0000${key}`, sub))}">${icon}</button>`;
@@ -281,7 +290,7 @@
       const run = (id) => { this.closePops(); this.onAction(id); };
       this.pops = {
         more: new Popover(
-          MORE_STYLES.map((id) => `<button type="button" data-style="${id}">${MORE_PREVIEW[id]}</button>`).join('') + `<div class="note">${WARN}.</div>`,
+          MORE_STYLES.map((id) => `<button type="button" data-style="${id}">${MORE_PREVIEW[id]}</button>`).join('') + `<div class="note">${WARN_HTML}</div>`,
           (e) => { const b = e.target.closest('button[data-style]'); if (b) run(b.dataset.style); },
         ),
         about: new Popover(
