@@ -1,6 +1,6 @@
 // Finds LinkedIn's editors as they appear and attaches a toolbar to each.
 (function (root) {
-  const { CONFIG, Toolbar, unicode: U, editor: E } = root.LTF;
+  const { CONFIG, Toolbar, MAC, unicode: U, editor: E } = root.LTF;
   const attached = new Map(); // editor element -> controller
   // Diagnostics go to console.debug (DevTools "Verbose" level), prefixed [LTF].
   const log = (...a) => console.debug('[LTF]', ...a);
@@ -188,9 +188,11 @@
       ed.addEventListener('focusin', () => requestAnimationFrame(() => this.syncBorder()));
       ed.addEventListener('focusout', () => requestAnimationFrame(() => this.syncBorder()));
 
-      // Keyboard shortcuts.
+      // Keyboard shortcuts: ⌘ on Mac (Ctrl+B there is macOS's "cursor back"
+      // text binding, so leave it alone), Ctrl elsewhere.
       ed.addEventListener('keydown', (e) => {
-        if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+        const mod = MAC ? e.metaKey && !e.ctrlKey : e.ctrlKey && !e.metaKey;
+        if (!mod || e.altKey || e.shiftKey) return;
         const id = { b: 'bold', i: 'italic', u: 'underline' }[e.key.toLowerCase()];
         if (!id) return;
         e.preventDefault();

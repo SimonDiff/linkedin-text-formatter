@@ -22,7 +22,7 @@ comments and messages.
 - **Bulleted and numbered lists.**
 - **Clear formatting** turns stylized text back into plain letters, including text you pasted in.
 - **Typing mode:** click a style with nothing selected and what you type next comes out styled.
-- **Keyboard shortcuts:** ⌘/Ctrl+B, ⌘/Ctrl+I, ⌘/Ctrl+U.
+- **Keyboard shortcuts:** ⌘B, ⌘I, ⌘U on Mac; Ctrl+B, Ctrl+I, Ctrl+U on Windows and Linux. Hover any button to see its name and shortcut.
 - **Accents survive:** é, ñ, ü and friends keep their accent when styled.
 - **Styles combine and toggle:** Bold then Italic gives bold italic, Bold again removes it.
 - Works in the post composer, comment and reply boxes, floating chat windows and the Messaging page.
@@ -39,15 +39,15 @@ Note that LinkedIn counts every stylized letter as 2 characters, and so does thi
 
 Apart from bold in posts, LinkedIn has no real formatting: no italic, no underline, and no real bold in comments or messages
 (the comment box shows real bold while you type, but LinkedIn removes it when you post).
-The **Stylized** buttons swap your letters for Unicode symbols
+The stylized buttons (right of the first divider in the toolbar) swap your letters for Unicode symbols
 that only *look* like letters (𝗯𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 …), and that has a cost:
 
 - **Search:** LinkedIn search and Google don't match 𝗿𝗲𝗰𝗿𝘂𝗶𝘁𝗲𝗿 to "recruiter", so those words can't be found.
 - **Algorithm:** the feed can't read those words either, which may hurt how your post is understood and shown.
 - **Accessibility:** screen readers skip them or spell them out symbol by symbol ("mathematical bold small r…").
 
-The **Safe** group (case and lists, plus bold in posts) uses plain characters and has none of these problems.
-That's why the toolbar keeps the two groups apart.
+The safe buttons on the left of the toolbar (case and lists, plus bold in posts) use plain characters and have none of these problems.
+That's why the toolbar keeps the two groups apart, with a divider between them, and why every stylized button shows an orange ! "Search/algorithm unsafe" when you hover it.
 
 > [!NOTE]
 > I know most people won't bother with any of this. Nobody has time to proofread what ChatGPT
