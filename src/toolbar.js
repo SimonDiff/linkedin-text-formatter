@@ -8,7 +8,7 @@
 
   // Line icons in the style of LinkedIn's 2026 iconography: outline by default,
   // filled (or heavier) when the style is on. The CSS does the switch: shapes
-  // marked .f get filled, every stroke gets heavier.
+  // marked .f/.d get filled, every other stroke gets heavier.
   const svg = (body, w = 20) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   const ICONS = {
     bold: svg('<path class="f" fill-rule="evenodd" d="M6.5 4.5h6.75a4 4 0 0 1 2.7 6.95 4.25 4.25 0 0 1-2.2 8.05H6.5z M9.25 7.25v3.5h4a1.75 1.75 0 0 0 0-3.5z M9.25 13.25v3.5h4.5a1.75 1.75 0 0 0 0-3.5z"/>'),
@@ -17,7 +17,7 @@
     strike: svg('<path d="M16.5 7c-.6-1.6-2.3-2.5-4.4-2.5-2.6 0-4.4 1.4-4.4 3.4 0 1.5.9 2.5 2.6 3.1M4 12h16M8 16.8c.6 1.7 2.3 2.7 4.5 2.7 2.7 0 4.5-1.4 4.5-3.5 0-.8-.3-1.5-.8-2"/>'),
     upper: svg('<path d="M2.5 18l4.25-12L11 18M4 14h5.5M13 18l4.25-12L21.5 18M14.5 14H20"/>'),
     lower: svg('<circle cx="7.5" cy="14.5" r="3.5"/><path d="M11 11v7"/><circle cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>'),
-    bullets: svg('<circle class="f" cx="4.5" cy="6.5" r="1.5"/><circle class="f" cx="4.5" cy="12" r="1.5"/><circle class="f" cx="4.5" cy="17.5" r="1.5"/><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/>'),
+    bullets: svg('<circle class="d" cx="4.5" cy="6.5" r="1.5"/><circle class="d" cx="4.5" cy="12" r="1.5"/><circle class="d" cx="4.5" cy="17.5" r="1.5"/><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/>'),
     numbers: svg('<path d="M3.5 5l1.5-1v5M3.5 9h3M3.5 15.2a1.5 1.5 0 0 1 3 .3c0 1-3 2-3 3.5h3M10 6.5h10M10 12h10M10 17.5h10"/>'),
     clear: svg('<path d="M13.5 4.5l6 6-8 8h-5l-2.5-2.5z M9 9l6 6M11 19.5h8.5"/>'),
     more: svg('<path d="M2.5 18l4.25-12L11 18M4 14h5.5"/><circle cx="16.5" cy="14.5" r="3.5"/><path d="M20 11v7"/>') +
@@ -81,8 +81,11 @@
     button:focus-visible { outline: 2px solid #0a66c2; outline-offset: -2px; }
     /* Selected, like LinkedIn's nav: filled icon in near-black with a bar under it. */
     button.active { color: rgba(0,0,0,.9); }
-    button.active svg { stroke-width: 2.3; }
-    button.active .f { fill: currentColor; }
+    button.active svg { stroke-width: 2.1; }
+    /* Solid shapes get a clean fill with no stroke on top (a stroke on a fill
+       bloats the glyph); bullet dots keep their thin edge so they don't shrink. */
+    button.active .f { fill: currentColor; stroke: none; }
+    button.active .d { fill: currentColor; stroke-width: 1.6; }
     button.active::after {
       content: ''; position: absolute; left: 25%; right: 25%; bottom: 1px; height: 2px;
       border-radius: 1px; background: currentColor;
