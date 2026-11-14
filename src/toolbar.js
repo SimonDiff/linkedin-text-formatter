@@ -42,8 +42,8 @@
 
   const MAC = /Mac|iPhone|iPad/.test(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent);
   const KEYS = { bold: 'B', italic: 'I', underline: 'U' };
-  // Keys as a list, drawn as key caps in the tooltip: ['⌘', 'B'] or ['Ctrl', 'B'].
-  const shortcut = (id) => (KEYS[id] ? [MAC ? '⌘' : 'Ctrl', KEYS[id]] : null);
+  // Keys as a list, drawn as key caps joined by "+" in the tooltip: ['⌘ cmd', 'B'] or ['Ctrl', 'B'].
+  const shortcut = (id) => (KEYS[id] ? [MAC ? '⌘ cmd' : 'Ctrl', KEYS[id]] : null);
 
   const FONT = '-apple-system, system-ui, "Segoe UI", Roboto, sans-serif';
   const CSS = `
@@ -113,7 +113,8 @@
       padding: 4px 8px; max-width: 240px; pointer-events: none;
     }
     .tip .name { display: flex; align-items: center; gap: 8px; }
-    .tip .keys { display: inline-flex; gap: 3px; }
+    .tip .keys { display: inline-flex; align-items: center; gap: 3px; }
+    .tip .plus { font-weight: 400; color: rgba(255,255,255,.6); }
     .tip kbd {
       font: 500 11px/1 ${FONT}; color: rgba(255,255,255,.85); min-width: 16px; height: 18px; padding: 0 4px;
       box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
@@ -261,11 +262,11 @@
       // No title attributes: the toolbar draws its own tooltips (data-tip), so
       // the native ones don't double up. aria-label carries the name.
       const tipHtml = (name, keys, sub) => {
-        const caps = keys ? `<span class="keys">${keys.map((k) => `<kbd>${esc(k)}</kbd>`).join('')}</span>` : '';
+        const caps = keys ? `<span class="keys">${keys.map((k) => `<kbd>${esc(k)}</kbd>`).join('<span class="plus">+</span>')}</span>` : '';
         return `<span class="name">${esc(name)}${caps}</span>${sub ? `<span class="sub">${sub === WARN ? WARN_HTML : esc(sub)}</span>` : ''}`;
       };
       const button = (attrs, label, key, sub, icon) =>
-        `<button type="button" ${attrs} aria-label="${esc(label)}${key ? ` (${key.join('+')})` : ''}${sub ? `. ${esc(sub)}` : ''}" data-tip="${esc(tipHtml(label, key, sub))}">${icon}</button>`;
+        `<button type="button" ${attrs} aria-label="${esc(label)}${key ? ` (${key.join(' + ').replace('⌘ ', '')})` : ''}${sub ? `. ${esc(sub)}` : ''}" data-tip="${esc(tipHtml(label, key, sub))}">${icon}</button>`;
       const btn = (id, sub) => button(`data-style="${id}"`, STYLES[id].label, shortcut(id), sub, ICONS[id]);
       // Two Bold buttons, real (Safe) and Unicode (Stylized); setNativeBold shows one.
       const nativeBtn = button('data-style="bold" data-native', 'Bold', shortcut('bold'), 'LinkedIn’s own bold, safe for search', ICONS.bold);
