@@ -1,9 +1,11 @@
-# LinkedIn DiffStyle
+# DiffStyle for LinkedIn
 
 <img src="docs/screenshots/diffstyle-linkedin-announcement-wide.png" alt="DiffStyle for LinkedIn Chrome extension" width="100%">
 
 A Chrome extension that adds a formatting toolbar and a permanent character counter to LinkedIn posts,
-comments and messages.
+comments and messages. It collects no data: see the [privacy policy](PRIVACY.md).
+
+DiffStyle is an independent project, not affiliated with or endorsed by LinkedIn.
 
 [Jump to Install (Chrome)](#install-chrome)
 
@@ -102,6 +104,9 @@ If you write in one of those, please fork this repo and make it yours. All the c
 Open an issue or DM me if you build one: I'll link to it from here.
 
 ## For developers
+
+**Packaging for the Chrome Web Store:** `./scripts/package.sh` builds `dist/diffstyle-<version>.zip` with only the
+files the extension needs (manifest, icons, `src/`, license). Listing text and images live in [`store/`](store/).
 
 No build step: plain JavaScript, Manifest V3. After editing a file, hit ↻ on the extension's card and reload LinkedIn.
 

@@ -273,7 +273,7 @@
       const moreBtn = button('data-pop="more" aria-haspopup="true"', 'More fonts', null, WARN, ICONS.more);
       const clearBtn = button('data-style="clear"', 'Clear formatting', null, nativeBold ? 'Removes bold and turns stylized letters back into plain text' : 'Turns stylized letters back into plain text', ICONS.clear);
       // Messages skip the credits badge: floating chat windows are too narrow for one line with it.
-      const aboutBtn = button('class="badge" data-pop="about"', 'About LinkedIn DiffStyle', null, '', ICONS.badge);
+      const aboutBtn = button('class="badge" data-pop="about"', 'About DiffStyle for LinkedIn', null, '', ICONS.badge);
       const count = limit && !counterBelow ? '<span class="count" aria-live="polite"></span>' : '';
       const classes = ['bar', layout, compact && 'compact', layout === 'floating' && 'hidden'].filter(Boolean).join(' ');
 
@@ -303,7 +303,7 @@
         ),
         about: new Popover(
           `<div class="about">
-            <p><strong>LinkedIn DiffStyle</strong> extension by <a href="${AUTHOR_URL}" target="_blank" rel="noopener">Simon Diff</a></p>
+            <p><strong>DiffStyle for LinkedIn</strong> by <a href="${AUTHOR_URL}" target="_blank" rel="noopener">Simon Diff</a></p>
             <p>Open source on <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a>.</p>
           </div>`,
           (e, pop) => { if (e.target.closest('a')) setTimeout(() => pop.toggle(null, false), 0); },
